@@ -1,0 +1,2 @@
+# ShakkiAIUCI
+ShakkiAI
