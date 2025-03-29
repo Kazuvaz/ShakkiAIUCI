@@ -56,8 +56,14 @@ class board():
     def move(self, syntax):
         froms = [int(syntax[1])*-1+8,int(deAlphabetize(syntax[0]))]
         tos = [int(syntax[3])*-1+8,int(deAlphabetize(syntax[2]))]
-
-        self.pieces[tos[0]][tos[1]] = self.pieces[froms[0]][froms[1]]
+        #korotukset
+        if len( syntax) > 4:
+            if self.turn:
+                self.pieces[tos[0]][tos[1]] = str(syntax[4]).capitalize()
+            else:
+                self.pieces[tos[0]][tos[1]] = str(syntax[4]).capitalize()
+        else:
+            self.pieces[tos[0]][tos[1]] = self.pieces[froms[0]][froms[1]]
         self.pieces[froms[0]][froms[1]] = '0'
     #siirtää koordinaattejen mukaan, muista että koordinaatit alkavat vasen yläkulma
     def moveInt(self, afro,bfro,ato,bto):
@@ -264,10 +270,79 @@ class board():
             converted.append (self.convertUCI(le[0],le[1],le[2],le[3]))
         for co in converted:
             print(co)
-        #tarkistaa että onko vastustaja shakissa siirron alussa
-        #tämä vaihe olisi voitu suorittaa legal continuationin kanssa, mutta tämä on erillinen funktion tulevaisuuden optimoimista varten. 
-        def impossible(self):
-            return False
+    #tarkistaa että onko vastustaja shakissa siirron alussa
+    #tämä vaihe olisi voitu suorittaa legal continuationin kanssa, mutta tämä on erillinen funktion tulevaisuuden optimoimista varten. 
+    def impossible(self):
+        for i in range(0,8):
+            for j in range(0,8):
+                #löytää vastustajan kuninkaan
+                if self.turn and self.pieces[i][j] == 'k'or not self.turn and self.pieces[i][j] == 'K':
+                    #ratsu shakit
+                    target = 'n'
+                    if self.turn:
+                        target = 'N'
+                    if (
+                        self.Friendly(i+2,j+1) and self.pieces[i+2][j+1] == target or self.Friendly(i+2,j-1) and self.pieces[i+2][j-1] == target 
+                        or self.Friendly(i-2,j+1) and self.pieces[i-2][j+1] == target or self.Friendly(i+2,j-1) and self.pieces[i-2][j-1] == target
+                        or self.Friendly(i+1,j+2) and self.pieces[i+1][j+2] == target or self.Friendly(i-1,j+2) and self.pieces[i-1][j+2] == target 
+                        or self.Friendly(i+1,j-2) and self.pieces[i+1][j-2] == target or self.Friendly(i-1,j-2) and self.pieces[i-1][j-2] == target
+                    ) :
+                        return True
+                    #tornishakit
+                    target = 'r'
+                    target2 = 'q'
+                    if self.turn:
+                        target = 'R'
+                        target2 = 'Q'
+                    for k in range(1,8):
+                        if self.Friendly(i,j+k) and (self.pieces[i][j+k] == target or self.pieces[i][j+k] == target2):
+                            return True
+                        elif not (self.onBoard(i,j+k) and self.pieces[i][j+k] == '0'):
+                            break
+                    for k in range(1,8):
+                        if self.Friendly(i,j-k) and (self.pieces[i][j-k] == target or self.pieces[i][j-k] == target2):
+                            return True
+                        elif not (self.onBoard(i,j-k) and self.pieces[i][j-k] == '0'):
+                            break
+                    for k in range(1,8):
+                        if self.Friendly(i+k,j) and (self.pieces[i+k][j] == target or self.pieces[i+k][j] == target2):
+                            return True
+                        elif not (self.onBoard(i+k,j) and self.pieces[i+k][j] == '0'):
+                            break
+                    for k in range(1,8):
+                        if self.Friendly(i-k,j) and (self.pieces[i-k][j] == target or self.pieces[i-k][j] == target2):
+                            return True
+                        elif not (self.onBoard(i-k,j) and self.pieces[i][j-k] == '0'):
+                            break
+                    #lahetti shakit
+                    target = 'b'
+                    target2 = 'q'
+                    if self.turn:
+                        target = 'B'
+                        target2 = 'Q'
+                    for k in range(1,8):
+                        if self.Friendly(i+k,j+k) and (self.pieces[i+k][j+k] == target or self.pieces[i+k][j+k] == target2):
+                            return True
+                        elif not (self.onBoard(i+k,j+k) and self.pieces[i+k][j+k] == '0'):
+                            break
+                    for k in range(1,8):
+                        if self.Friendly(i+k,j-k) and (self.pieces[i+k][j-k] == target or self.pieces[i+k][j-k] == target2):
+                            return True
+                        elif not (self.onBoard(i+k,j-k) and self.pieces[i+k][j-k] == '0'):
+                            break
+                    for k in range(1,8):
+                        if self.Friendly(i+k,j-k) and (self.pieces[i+k][j-k] == target or self.pieces[i+k][j-k] == target2):
+                            return True
+                        elif not (self.onBoard(i+k,j-k) and self.pieces[i+k][j-k] == '0'):
+                            break
+                    for k in range(1,8):
+                        if self.Friendly(i-k,j-k) and (self.pieces[i-k][j-k] == target or self.pieces[i-k][j-k] == target2):
+                            return True
+                        elif not (self.onBoard(i-k,j-k) and self.pieces[i-k][j-k] == '0'):
+                            break 
+
+                    return False
+        return False
 
 
 
