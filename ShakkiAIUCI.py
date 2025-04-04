@@ -1,4 +1,4 @@
-    
+import copy   
 def deAlphabetize(se:chr):
     if se == 'a':
         return '0'
@@ -48,14 +48,47 @@ class board():
     castling = [True,True,True,True]
     def __init__(self, pieces, turn, castling):
         #luodaan pöytä tietyssä tilanteessa
-        self.pieces = pieces[:]
+        self.pieces =  copy.deepcopy(pieces)
         self.turn = turn
-        self.castling = castling[:]
+        self.castling = copy.deepcopy(castling)
     
     #siirtää siirto syntaxin mukaan
-    def move(self, syntax):
+    def move(self, syntax :str):
         froms = [int(syntax[1])*-1+8,int(deAlphabetize(syntax[0]))]
         tos = [int(syntax[3])*-1+8,int(deAlphabetize(syntax[2]))]
+
+        #linnoitus
+        if syntax.startswith('e8'):
+            if pieces[0][4] == 'k':
+                if syntax == 'e8c8' and self.castling[0]:
+                    pieces[0][0] = '0'
+                    pieces[0][3] = 'r'
+                elif syntax == 'e8g8' and self.castling[1]:
+                    pieces[0][7] = '0'
+                    pieces[0][5] = 'r'
+                self.castling[0] = False
+                self.castling[1] = False
+        elif syntax.startswith('e1'):
+            if pieces[7][4] == 'K':
+                if syntax == 'e8c8' and self.castling[0]:
+                    pieces[7][0] = '0'
+                    pieces[7][3] = 'R'
+                elif syntax == 'e8g8' and self.castling[1]:
+                    pieces[7][7] = '0'
+                    pieces[7][5] = 'R'
+                self.castling[2] = False
+                self.castling[3] = False
+        elif syntax.startswith('a8'):
+            self.castling[0] = False
+        elif syntax.startswith('h8'):
+            self.castling[1] = False
+        elif syntax.startswith('a1'):
+            self.castling[2] = False
+        elif syntax.startswith('h1'):
+            self.castling[3] = False
+
+
+
         #korotukset
         if len( syntax) > 4:
             if self.turn:
@@ -65,6 +98,11 @@ class board():
         else:
             self.pieces[tos[0]][tos[1]] = self.pieces[froms[0]][froms[1]]
         self.pieces[froms[0]][froms[1]] = '0'
+        if self.turn:
+            self.turn = False
+        else:
+            self.turn = True
+        
     #siirtää koordinaattejen mukaan, muista että koordinaatit alkavat vasen yläkulma
     def moveInt(self, afro,bfro,ato,bto):
         froms = [afro,bfro]
@@ -185,7 +223,24 @@ class board():
                 break
                     
         return legals
-    def legalContinuations(self):
+    #palauttaa listan mahdollisista pöydistä jotka voivat johtua nykyisestä pöydän tilanteesta
+    def trimmedContinuations(self):
+        legals = self.legalContinuationsUntrimmed()
+        boardStates = []
+        print(str(len(legals)) + " kegals lenght")
+        for bo in legals:
+            newBoard = board(self.pieces,self.turn,self.castling)
+            newBoard.move(bo)
+            if not newBoard.impossible():
+                boardStates.append(newBoard)
+        print(str(len(boardStates))  + " boardsta lenght")
+        return boardStates
+
+
+
+
+    #palauttaa kaikki mahdolliset siirrot tilanteesta jotkut näistä siirroista ovat laittomia esim siirrot joiden jälkeen oma kuningas on shakissa
+    def legalContinuationsUntrimmed(self):
         legals = []
         converted = []
         for i in range(0,8):
@@ -260,16 +315,27 @@ class board():
                         for s in self.lahetti(i,j):
                             legals.append(s)
                     #kuningas 
-                    if self.pieces[i][j] in ['q','Q']:
+                    if self.pieces[i][j] in ['k','K']:
                         for k in range(0,3):
                             for l in range(0,3):
                                 if not( k == 1 and l == 1):
                                     if not self.Friendly(i+k-1,j+l-1):
                                         legals.append((i,j,i+k-1,j+l-1))
+        if not self.turn:
+            if self.castling[0] and self.pieces[0][1] == '0'and self.pieces[0][2] == '0' and self.pieces[0][3] == '0':
+                converted.append('e8c8')
+            if self.castling[1] and self.pieces[0][5] == '0'and self.pieces[0][6] == '0':
+                converted.append('e8g8')
+        else:
+            if self.castling[2] and self.pieces[7][1] == '0'and self.pieces[7][2] == '0' and self.pieces[7][3] == '0':
+                converted.append('e1c1')
+            if self.castling[3] and self.pieces[7][5] == '0'and self.pieces[7][6] == '0':
+                converted.append('e1g1')
+
+
         for le in legals:
             converted.append (self.convertUCI(le[0],le[1],le[2],le[3]))
-        for co in converted:
-            print(co)
+        return converted
     #tarkistaa että onko vastustaja shakissa siirron alussa
     #tämä vaihe olisi voitu suorittaa legal continuationin kanssa, mutta tämä on erillinen funktion tulevaisuuden optimoimista varten. 
     def impossible(self):
@@ -277,17 +343,19 @@ class board():
             for j in range(0,8):
                 #löytää vastustajan kuninkaan
                 if self.turn and self.pieces[i][j] == 'k'or not self.turn and self.pieces[i][j] == 'K':
+                    
                     #ratsu shakit
                     target = 'n'
                     if self.turn:
                         target = 'N'
                     if (
-                        self.Friendly(i+2,j+1) and self.pieces[i+2][j+1] == target or self.Friendly(i+2,j-1) and self.pieces[i+2][j-1] == target 
-                        or self.Friendly(i-2,j+1) and self.pieces[i-2][j+1] == target or self.Friendly(i+2,j-1) and self.pieces[i-2][j-1] == target
-                        or self.Friendly(i+1,j+2) and self.pieces[i+1][j+2] == target or self.Friendly(i-1,j+2) and self.pieces[i-1][j+2] == target 
-                        or self.Friendly(i+1,j-2) and self.pieces[i+1][j-2] == target or self.Friendly(i-1,j-2) and self.pieces[i-1][j-2] == target
+                        self.onBoard(i+2,j+1) and self.pieces[i+2][j+1] == target or self.onBoard(i+2,j-1) and self.pieces[i+2][j-1] == target 
+                        or self.onBoard(i-2,j+1) and self.pieces[i-2][j+1] == target or self.onBoard(i-2,j-1) and self.pieces[i-2][j-1] == target
+                        or self.onBoard(i+1,j+2) and self.pieces[i+1][j+2] == target or self.onBoard(i-1,j+2) and self.pieces[i-1][j+2] == target 
+                        or self.onBoard(i+1,j-2) and self.pieces[i+1][j-2] == target or self.onBoard(i-1,j-2) and self.pieces[i-1][j-2] == target
                     ) :
                         return True
+                    
                     #tornishakit
                     target = 'r'
                     target2 = 'q'
@@ -295,51 +363,86 @@ class board():
                         target = 'R'
                         target2 = 'Q'
                     for k in range(1,8):
-                        if self.Friendly(i,j+k) and (self.pieces[i][j+k] == target or self.pieces[i][j+k] == target2):
+                        if not self.onBoard(i,j+k):
+                            break
+                        elif self.Friendly(i,j+k) and (self.pieces[i][j+k] == target or self.pieces[i][j+k] == target2):
                             return True
-                        elif not (self.onBoard(i,j+k) and self.pieces[i][j+k] == '0'):
+                        elif not self.pieces[i][j+k] == '0':
                             break
                     for k in range(1,8):
+                        if not self.onBoard(i,j-k):
+                            break
                         if self.Friendly(i,j-k) and (self.pieces[i][j-k] == target or self.pieces[i][j-k] == target2):
                             return True
-                        elif not (self.onBoard(i,j-k) and self.pieces[i][j-k] == '0'):
+                        elif not self.pieces[i][j-k] == '0':
                             break
                     for k in range(1,8):
+                        if not self.onBoard(i+k,j):
+                            break
                         if self.Friendly(i+k,j) and (self.pieces[i+k][j] == target or self.pieces[i+k][j] == target2):
                             return True
-                        elif not (self.onBoard(i+k,j) and self.pieces[i+k][j] == '0'):
+                        elif not self.pieces[i+k][j] == '0':
                             break
                     for k in range(1,8):
+                        if not self.onBoard(i-k,j):
+                            break
                         if self.Friendly(i-k,j) and (self.pieces[i-k][j] == target or self.pieces[i-k][j] == target2):
                             return True
-                        elif not (self.onBoard(i-k,j) and self.pieces[i][j-k] == '0'):
+                        elif not self.pieces[i][j-k] == '0':
                             break
                     #lahetti shakit
+                    
                     target = 'b'
                     target2 = 'q'
                     if self.turn:
                         target = 'B'
                         target2 = 'Q'
                     for k in range(1,8):
-                        if self.Friendly(i+k,j+k) and (self.pieces[i+k][j+k] == target or self.pieces[i+k][j+k] == target2):
+                        if not self.onBoard(i+k,j+k):
+                            break
+                        if self.onBoard(i+k,j+k) and (self.pieces[i+k][j+k] == target or self.pieces[i+k][j+k] == target2):
                             return True
-                        elif not (self.onBoard(i+k,j+k) and self.pieces[i+k][j+k] == '0'):
+                        elif not self.pieces[i+k][j+k] == '0':
                             break
                     for k in range(1,8):
-                        if self.Friendly(i+k,j-k) and (self.pieces[i+k][j-k] == target or self.pieces[i+k][j-k] == target2):
+                        if not self.onBoard(i+k,j-k):
+                            break
+                        if self.onBoard(i+k,j-k) and (self.pieces[i+k][j-k] == target or self.pieces[i+k][j-k] == target2):
+                            
                             return True
-                        elif not (self.onBoard(i+k,j-k) and self.pieces[i+k][j-k] == '0'):
+                        elif not self.pieces[i+k][j-k] == '0':
                             break
                     for k in range(1,8):
-                        if self.Friendly(i+k,j-k) and (self.pieces[i+k][j-k] == target or self.pieces[i+k][j-k] == target2):
+                        if not self.onBoard(i-k,j+k):
+                            break
+                        if self.onBoard(i-k,j+k) and (self.pieces[i-k][j+k] == target or self.pieces[i-k][j+k] == target2):
+                            
                             return True
-                        elif not (self.onBoard(i+k,j-k) and self.pieces[i+k][j-k] == '0'):
+                        elif not self.pieces[i-k][j+k] == '0':
                             break
                     for k in range(1,8):
-                        if self.Friendly(i-k,j-k) and (self.pieces[i-k][j-k] == target or self.pieces[i-k][j-k] == target2):
+                        if not self.onBoard(i-k,j-k):
+                            break
+                        if self.onBoard(i-k,j-k) and (self.pieces[i-k][j-k] == target or self.pieces[i-k][j-k] == target2):
+
                             return True
-                        elif not (self.onBoard(i-k,j-k) and self.pieces[i-k][j-k] == '0'):
+                        elif not self.pieces[i-k][j-k] == '0':
                             break 
+                    #kuninasshakit 
+                
+                    for k in range(0,3):
+                        for l in range(0,3):
+                            if not( k == 1 and l == 1):
+                                if self.onBoard(i+k-1,j+l-1) and self.pieces[i+k-1][j+l-1] in ['k','K']:
+                                    return True
+                    #moukkashakit 
+                    direction = 1
+                    target = 'p'
+                    if self.turn:
+                        target = 'P'
+                        direction = -1
+                    if self.onBoard(i+direction,j+1) and self.pieces[i+direction][j+1] == target or self.onBoard(i+direction,j-1) and self.pieces[i+direction][j-1] == target:
+                        return True
 
                     return False
         return False
@@ -375,11 +478,17 @@ class board():
 pieces =[['0' for i in range(8)] for j in range(8)]
 pieces[0] = ["r","n","b","q","k","b","n","r"]
 pieces[1] = ["p","p","p","p","p","p","p","p"]
-pieces[6] = ["P","P","P","0","P","P","P","P"]
-pieces[7] = ["R","N","B","Q","K","B","N","R"]
+pieces[6] = ["P","P","P","P","P","P","P","P"]
+pieces[7] = ["R","N","B","Q","K","0","0","R"]
 b =  board(pieces,True,[True,True,True,True])
 
-b.move("a1a3")
-b.moveInt(1,1,5,1)
-b.legalContinuations()
 b.prints()
+print()
+
+a =  b.trimmedContinuations()
+c :board = a[19]
+
+b.prints()
+print()
+c.prints()
+
