@@ -7,4 +7,4 @@ Toivon että siitä tulee ainakin jonkin verran hankala vastustaja.
 
 ydin:
 
-ohjelma tarvitsee luokan joka sisältää peli tilanteen, puun jonka avulla käydä mahdollisia pelitilanteita läpi ja evaluointi functiot joiden avulla ohjelma arvioi mitä oksaa katsoa pitemmälle ja/tai kuinka hyvä tilanne on oksan päädyssä.
+ohjelma tarvitsee luokan joka sisältää peli tilanteen, puun jonka avulla käydä mahdollisia pelitilanteita läpi ja evaluointi functiot joiden avulla ohjelma arvioi mitä oksaa katsoa pitemmälle ja/tai kuinka hyvä tilanne on oksan päädyssä. aijon käyttää minimax algorytmiä mutta koska shakki pelit haarautuvat todella nopeaa joudun määrittelemään yksittäisten pelitilanteiden arvon enkä pysty jokaista oksaa loppuun asti saattamaan.
