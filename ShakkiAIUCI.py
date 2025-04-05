@@ -46,6 +46,11 @@ class board():
     turn = True
     #linnoitus oikeudet [musta kuningattaterpuoli, kuninkaan puoli, valkoinen kuningattaren puoli, kuninkaan puoli]
     castling = [True,True,True,True]
+
+    #edellisen siirron notaatio
+    prev :str = 's'
+    #en passant
+    special :int =-1
     def __init__(self, pieces, turn, castling):
         #luodaan pöytä tietyssä tilanteessa
         self.pieces =  copy.deepcopy(pieces)
@@ -54,28 +59,29 @@ class board():
     
     #siirtää siirto syntaxin mukaan
     def move(self, syntax :str):
+        self.prev = syntax
         froms = [int(syntax[1])*-1+8,int(deAlphabetize(syntax[0]))]
         tos = [int(syntax[3])*-1+8,int(deAlphabetize(syntax[2]))]
 
         #linnoitus
         if syntax.startswith('e8'):
-            if pieces[0][4] == 'k':
+            if self.pieces[0][4] == 'k':
                 if syntax == 'e8c8' and self.castling[0]:
-                    pieces[0][0] = '0'
-                    pieces[0][3] = 'r'
+                    self.pieces[0][0] = '0'
+                    self.pieces[0][3] = 'r'
                 elif syntax == 'e8g8' and self.castling[1]:
-                    pieces[0][7] = '0'
-                    pieces[0][5] = 'r'
+                    self.pieces[0][7] = '0'
+                    self.pieces[0][5] = 'r'
                 self.castling[0] = False
                 self.castling[1] = False
         elif syntax.startswith('e1'):
-            if pieces[7][4] == 'K':
+            if self.pieces[7][4] == 'K':
                 if syntax == 'e8c8' and self.castling[0]:
-                    pieces[7][0] = '0'
-                    pieces[7][3] = 'R'
+                    self.pieces[7][0] = '0'
+                    self.pieces[7][3] = 'R'
                 elif syntax == 'e8g8' and self.castling[1]:
-                    pieces[7][7] = '0'
-                    pieces[7][5] = 'R'
+                    self.pieces[7][7] = '0'
+                    self.pieces[7][5] = 'R'
                 self.castling[2] = False
                 self.castling[3] = False
         elif syntax.startswith('a8'):
@@ -87,7 +93,11 @@ class board():
         elif syntax.startswith('h1'):
             self.castling[3] = False
 
-
+        #laita muistiin enpassant mahdollisuus
+        if froms[0] == 6 and self.turn and tos[0] == 4 and self.pieces[froms[0]][froms[1]]:
+            self.special = froms[1]
+        elif froms[0] == 1 and not self.turn and tos[0] == 3 and self.pieces[froms[0]][froms[1]]:
+            self.special = froms[1]
 
         #korotukset
         if len( syntax) > 4:
@@ -227,13 +237,13 @@ class board():
     def trimmedContinuations(self):
         legals = self.legalContinuationsUntrimmed()
         boardStates = []
-        print(str(len(legals)) + " kegals lenght")
+
         for bo in legals:
             newBoard = board(self.pieces,self.turn,self.castling)
             newBoard.move(bo)
             if not newBoard.impossible():
                 boardStates.append(newBoard)
-        print(str(len(boardStates))  + " boardsta lenght")
+       
         return boardStates
 
 
@@ -258,21 +268,24 @@ class board():
                             if i+direction in [0,7]:
                                 #korota
                                 
-                                converted.append(self.convertUCI((i,j,i+direction,j)) + 'r')
-                                converted.append(self.convertUCI((i,j,i+direction,j)) + 'q')
-                                converted.append(self.convertUCI((i,j,i+direction,j)) + 'b')
-                                converted.append(self.convertUCI((i,j,i+direction,j)) + 'n')
-
-                                
+                                converted.append(self.convertUCI(i,j,i+direction,j) + 'r')
+                                converted.append(self.convertUCI(i,j,i+direction,j) + 'q')
+                                converted.append(self.convertUCI(i,j,i+direction,j) + 'b')
+                                converted.append(self.convertUCI(i,j,i+direction,j) + 'n') 
                             else:
                                 legals.append((i,j,i+direction,j))
                             #tuplasiirto
-                            if i == 6 and self.pieces[i+2*direction][j] == '0':
+                            if self.turn and i == 6 and self.pieces[i+2*direction][j] == '0':
                                 legals.append((i,j,i+2*direction,j))
+                            elif not self.turn and i == 1 and self.pieces[i+2*direction][j] == '0':
+                                legals.append((i,j,i+2*direction,j))
+
+
                         #syö
                         if self.onBoard(i+direction,j+1):
-                            if self.turn and self.pieces[i+direction][j+1] in ['n','p','r','b','k','q'] or not self.turn and self.pieces[i+direction][j+1] in ['N','P','R','B','Q']:
+                            if  self.turn and self.pieces[i+direction][j+1] in ['n','p','r','b','k','q'] or not self.turn and self.pieces[i+direction][j+1] in ['N','P','R','B','Q']:
                                 legals.append((i,j,i+direction,j+1))
+                        if self.onBoard(i+direction,j-1):
                             if  self.turn and self.pieces[i+direction][j-1] in ['n','p','r','b','k','q'] or not self.turn and self.pieces[i+direction][j-1] in ['N','P','R','B','Q']:
                                 legals.append((i,j,i+direction,j-1))
                                 
@@ -342,7 +355,7 @@ class board():
         for i in range(0,8):
             for j in range(0,8):
                 #löytää vastustajan kuninkaan
-                if self.turn and self.pieces[i][j] == 'k'or not self.turn and self.pieces[i][j] == 'K':
+                if self.turn and self.pieces[i][j] == 'k'or (not self.turn and self.pieces[i][j] == 'K'):
                     
                     #ratsu shakit
                     target = 'n'
@@ -436,11 +449,11 @@ class board():
                                 if self.onBoard(i+k-1,j+l-1) and self.pieces[i+k-1][j+l-1] in ['k','K']:
                                     return True
                     #moukkashakit 
-                    direction = 1
+                    direction = -1
                     target = 'p'
                     if self.turn:
                         target = 'P'
-                        direction = -1
+                        direction = 1
                     if self.onBoard(i+direction,j+1) and self.pieces[i+direction][j+1] == target or self.onBoard(i+direction,j-1) and self.pieces[i+direction][j-1] == target:
                         return True
 
@@ -473,22 +486,4 @@ class board():
 
     
 
-
-#alkutilanne
-pieces =[['0' for i in range(8)] for j in range(8)]
-pieces[0] = ["r","n","b","q","k","b","n","r"]
-pieces[1] = ["p","p","p","p","p","p","p","p"]
-pieces[6] = ["P","P","P","P","P","P","P","P"]
-pieces[7] = ["R","N","B","Q","K","0","0","R"]
-b =  board(pieces,True,[True,True,True,True])
-
-b.prints()
-print()
-
-a =  b.trimmedContinuations()
-c :board = a[19]
-
-b.prints()
-print()
-c.prints()
 
