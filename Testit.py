@@ -1,5 +1,7 @@
 import ShakkiAIUCI
 import random
+import MinMaxTree
+import Evaluator
 #pelaa satunnaisia siirtoja n kertaa tulostaa siirrot. tulostaa myös laudan tilan alussa ja lopussa
 def randomMoves(n : int, lauta : ShakkiAIUCI.board):
     print()
@@ -30,7 +32,16 @@ def allMoves(lauta : ShakkiAIUCI.board):
     for a in con:
         p : ShakkiAIUCI.board = a
         print(p.prev)
-        
+
+def evaluate(n :int,lauta : ShakkiAIUCI.board):
+    start : MinMaxTree.Node = MinMaxTree.Node(lauta)
+    for i in range(0,n):
+        start.sprout()
+    for i in start.children:
+        nod : MinMaxTree.Node = i
+        #print(nod.board.prev + " " + str( nod.value))
+    start.bestLine()
+
 
 
 
@@ -47,14 +58,29 @@ pieces[0] = ["0","0","0","0","0","0","0","0"]
 pieces[1] = ["0","k","0","0","0","0","0","0"]
 pieces[2] = ["0","0","0","0","0","0","0","0"]
 pieces[3] = ["0","0","0","0","0","0","0","0"]
-pieces[4] = ["0","0","0","0","0","0","0","0"]
-pieces[5] = ["0","0","0","0","0","0","0","0"]
+pieces[4] = ["0","0","0","0","0","0","b","0"]
+pieces[5] = ["0","0","0","0","0","0","0","r"]
 pieces[6] = ["0","0","0","0","0","K","P","0"]
 pieces[7] = ["0","0","0","0","0","0","0","0"]
 customPosition =  ShakkiAIUCI.board(pieces,True,[False,False,False,False])
 
 #allMoves(opening)
-randomMoves(600,opening)
+#randomMoves(600,opening)
 
 #allMoves(customPosition)
 #randomMoves(3000,customPosition)
+
+
+#evaluate(500,opening)
+
+#customPosition.move("g2h3")
+evaluate(9,customPosition)
+
+'''
+
+
+customPosition.move("g2h3")
+customPosition.move("g4h3")
+customPosition.prints()
+print( Evaluator.evaluate(customPosition))
+'''
