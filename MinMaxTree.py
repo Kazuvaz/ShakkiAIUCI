@@ -46,6 +46,12 @@ class Node():
         bestNode : Node = self.children[self.scariest]
         
         bestNode.bestLine()
+    def bestMove(self):
+        #testifunktio linjojen seuraukseen
+        if len(self.children) == 0:
+            return
+        bestNode : Node = self.children[self.scariest]
+        print ("bestmove " +bestNode.board.prev)
         
 
 

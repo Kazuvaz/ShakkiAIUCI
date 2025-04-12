@@ -1,13 +1,14 @@
 import ShakkiAIUCI
 import threading
-
+import time
+import MinMaxTree
 #alkutilanne
 pieces =[['0' for i in range(8)] for j in range(8)]
 pieces[0] = ["r","n","b","q","k","b","n","r"]
 pieces[1] = ["p","p","p","p","p","p","p","p"]
 pieces[6] = ["P","P","P","P","P","P","P","P"]
 pieces[7] = ["R","N","B","Q","K","B","N","R"]
-currentMoveIndex : int = 3
+currentMoveIndex : int = 2
 currentState : ShakkiAIUCI.board 
 
 while True:
@@ -31,10 +32,20 @@ while True:
         splat = command.split(' ')
         moveCount = 0
         for s in range(currentMoveIndex, len(splat)):
-            currentState.move(s) 
+            print("see " + splat[s])
+            currentState.move(splat[s]) 
             moveCount += 1
         currentMoveIndex += moveCount
-    #elif command.startswith('go'):
+    elif command.startswith('go'):
+        tim = time.time()
+        puu : MinMaxTree.Node = MinMaxTree.Node(currentState)
+        while True:
+            if time.time()-tim > 1:
+                break
+            puu.sprout()
+        puu.bestMove()
+
+
 
          
 
