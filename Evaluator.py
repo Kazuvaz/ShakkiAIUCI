@@ -1,11 +1,18 @@
 import ShakkiAIUCI
-
+import math
 def evaluate(board : ShakkiAIUCI.board):
-    score : int = 0
+    score : float = 0
     score += pieceScore(board)
-
+    score += activity(board)
     return score
 
+
+def activity(board : ShakkiAIUCI.board):
+    score :float = 0
+    score += math.sqrt(len(board.trimmedContinuations()))
+    clone : ShakkiAIUCI.board = ShakkiAIUCI.board(board.pieces,not board.turn, board.castling)
+    score -= math.sqrt(len(clone.trimmedContinuations()))
+    return score
 
 def pieceScore(board : ShakkiAIUCI.board):
     
@@ -33,6 +40,5 @@ def pieceScore(board : ShakkiAIUCI.board):
     #kerrotaan vuoron perusteella joten ei tarvitse joka summauksessa tarkastaa vuoroa
    
     if not board.turn:
-        
         score = -1 *score
     return score

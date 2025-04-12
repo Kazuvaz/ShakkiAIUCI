@@ -58,7 +58,7 @@ pieces[0] = ["0","0","0","0","0","0","0","0"]
 pieces[1] = ["0","k","0","0","0","0","0","0"]
 pieces[2] = ["0","0","0","0","0","0","0","0"]
 pieces[3] = ["0","0","0","0","0","0","0","0"]
-pieces[4] = ["0","0","0","0","0","0","b","0"]
+pieces[4] = ["0","0","0","0","0","0","p","0"]
 pieces[5] = ["0","0","0","0","0","0","0","r"]
 pieces[6] = ["0","0","0","0","0","K","P","0"]
 pieces[7] = ["0","0","0","0","0","0","0","0"]
@@ -74,7 +74,7 @@ customPosition =  ShakkiAIUCI.board(pieces,True,[False,False,False,False])
 #evaluate(500,opening)
 
 #customPosition.move("g2h3")
-evaluate(9,customPosition)
+evaluate(50,opening)
 
 '''
 
