@@ -23,6 +23,8 @@ while True:
         print('only supports startpos')
         print('uciok')
     elif command == 'isready':
+        #encroissaant ei pyydä ucinewgame ollenkaan joten alustan pelin tässä myös 
+        currentState = ShakkiAIUCI.board(pieces,True,[True,True,True,True])
         #add conditions to check wether previous commands are done
         if True:
             print('readyok')
@@ -30,9 +32,11 @@ while True:
         currentState = ShakkiAIUCI.board(pieces,True,[True,True,True,True])
     elif command.startswith('position '):
         splat = command.split(' ')
+        temp : int = 0
+        if splat[1] == 'fen':
+            temp = 7
         moveCount = 0
-        for s in range(currentMoveIndex, len(splat)):
-            print("see " + splat[s])
+        for s in range(currentMoveIndex + temp, len(splat)):
             currentState.move(splat[s]) 
             moveCount += 1
         currentMoveIndex += moveCount
