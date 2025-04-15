@@ -31,7 +31,7 @@ class Node():
         scary : int = 0
         for i in range(0,len(self.children)):
             a : Node = self.children[i]
-            if a.value*-1 > best:
+            if a.value*-1 > best or a.value*-1 == best and random.randint(0,1)== 0:
                 best = a.value*-1
                 scary = i
         self.scariest = scary
@@ -47,7 +47,6 @@ class Node():
         
         bestNode.bestLine()
     def bestMove(self):
-        #testifunktio linjojen seuraukseen
         if len(self.children) == 0:
             return
         bestNode : Node = self.children[self.scariest]
