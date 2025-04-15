@@ -47,7 +47,10 @@ while True:
             if time.time()-tim > 1:
                 break
             puu.sprout()
+        
         puu.bestMove()
+
+        
 
 
 

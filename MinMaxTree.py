@@ -50,7 +50,7 @@ class Node():
         if len(self.children) == 0:
             return
         bestNode : Node = self.children[self.scariest]
-        print ("bestmove " +bestNode.board.prev + " ponder " + self.children[0])
+        print ("bestmove " +bestNode.board.prev + " ponder " + self.children[0].board.prev)
         
 
 
