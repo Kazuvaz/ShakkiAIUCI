@@ -50,7 +50,8 @@ class Node():
         if len(self.children) == 0:
             return
         bestNode : Node = self.children[self.scariest]
-        print ("bestmove " +bestNode.board.prev + " ponder " + bestNode.children[bestNode.scariest])
+        print("info depth 1 seldepth 2 multipv 1 score cp 0 nodes 20 nps 20000 hashfull 0 tbhits 0 time 1 pv "+ bestNode.board.prev)
+        print ("bestmove " +bestNode.board.prev + " ponder " + bestNode.children[bestNode.scariest].board.prev)
         
 
 

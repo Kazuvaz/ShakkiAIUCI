@@ -40,7 +40,8 @@ def evaluate(n :int,lauta : ShakkiAIUCI.board):
     for i in start.children:
         nod : MinMaxTree.Node = i
         print(nod.board.prev + " " + str( nod.value))
-    start.bestMove()
+    #start.bestMove()
+    #start.bestLine()
 
 
 
@@ -77,7 +78,18 @@ customPosition =  ShakkiAIUCI.board(pieces,True,[False,False,False,False])
 
 #opening.move('e2e3')
 print("ss")
-evaluate(900,opening)
+opening.move('d2d4')
+opening.move('d7d5')
+opening.move('e2e4')
+opening.move('d5e4')
+opening.move('f1b5')
+opening.move('c7c6')
+opening.move('b5c4')
+opening.move('d8a5')
+opening.move('e1f1')
+
+
+evaluate(300,opening)
 
 '''
 
