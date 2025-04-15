@@ -62,7 +62,7 @@ class board():
         self.prev = syntax
         froms = [int(syntax[1])*-1+8,int(deAlphabetize(syntax[0]))]
         tos = [int(syntax[3])*-1+8,int(deAlphabetize(syntax[2]))]
-
+        
         #linnoitus
         if syntax.startswith('e8'):
             if self.pieces[0][4] == 'k':
@@ -401,7 +401,7 @@ class board():
                             break
                         if self.Friendly(i-k,j) and (self.pieces[i-k][j] == target or self.pieces[i-k][j] == target2):
                             return True
-                        elif not self.pieces[i][j-k] == '0':
+                        elif not self.pieces[i-k][j] == '0':
                             break
                     #lahetti shakit
                     

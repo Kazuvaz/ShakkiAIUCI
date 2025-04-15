@@ -74,7 +74,8 @@ customPosition =  ShakkiAIUCI.board(pieces,True,[False,False,False,False])
 #evaluate(500,opening)
 
 #customPosition.move("g2h3")
-evaluate(50,opening)
+print("ss")
+evaluate(100,opening)
 
 '''
 
