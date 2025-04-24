@@ -36,7 +36,7 @@ class Node():
                 scary = i
         self.scariest = scary
         #laitetaan oma arvo paras lapsi kerrotaan -1 koska seuraavan vuoron hyvä arvo on huono tämäb vuoron pelaajalle
-        self.value = best
+        self.value = best*-1
     
     def bestLine(self):
         #testifunktio linjojen seuraukseen
@@ -50,6 +50,7 @@ class Node():
         if len(self.children) == 0:
             return
         bestNode : Node = self.children[self.scariest]
+        #tämä prittaus on tässä vaan koska encroissant tarvitsee jonkin sortin evaluoinnin pelaamiseen ja ei jostain syystä ota siirtoa "bestmove: " palautteesta
         print("info depth 1 seldepth 2 multipv 1 score cp 0 nodes 20 nps 20000 hashfull 0 tbhits 0 time 1 pv "+ bestNode.board.prev)
         print ("bestmove " +bestNode.board.prev + " ponder " + bestNode.children[bestNode.scariest].board.prev)
         
