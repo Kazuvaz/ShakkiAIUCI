@@ -36,7 +36,7 @@ class Node():
                 scary = i
         self.scariest = scary
         #laitetaan oma arvo paras lapsi kerrotaan -1 koska seuraavan vuoron hyvä arvo on huono tämäb vuoron pelaajalle
-        self.value = best*-1
+        self.value = best
     
     def bestLine(self):
         #testifunktio linjojen seuraukseen
