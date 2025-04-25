@@ -50,9 +50,9 @@ def evaluate(n :int,lauta : ShakkiAIUCI.board):
         start.sprout()
     for i in start.children:
         nod : MinMaxTree.Node = i
-        #print(nod.board.prev + " " + str( nod.value))
+        print(nod.board.prev + " " + str( nod.value)+ " " + str( nod.exploreTime))
     #start.bestMove()
-    start.bestLine()
+    #start.bestLine()
 
 #alkutilanne
 pieces =[['0' for i in range(8)] for j in range(8)]
@@ -63,22 +63,22 @@ pieces[7] = ["R","N","B","Q","K","B","N","R"]
 opening =  ShakkiAIUCI.board(pieces,True,[True,True,True,True])
 
 #tilanne custom
-pieces[0] = ["0","0","0","0","0","0","0","0"]
-pieces[1] = ["0","k","0","0","0","0","0","0"]
-pieces[2] = ["0","0","q","0","0","0","0","0"]
+pieces[0] = ["k","0","0","0","0","0","0","r"]
+pieces[1] = ["p","p","0","0","0","0","0","0"]
+pieces[2] = ["N","0","0","0","0","0","0","0"]
 pieces[3] = ["0","0","0","0","0","0","0","0"]
 pieces[4] = ["0","0","0","0","0","0","0","0"]
-pieces[5] = ["0","0","0","0","0","0","0","0"]
-pieces[6] = ["0","0","0","0","0","K","Q","0"]
-pieces[7] = ["0","0","0","0","0","0","0","0"]
+pieces[5] = ["0","0","0","0","0","0","Q","0"]
+pieces[6] = ["0","0","0","0","0","0","0","0"]
+pieces[7] = ["0","0","0","0","0","0","K","0"]
 customPosition =  ShakkiAIUCI.board(pieces,True,[False,False,False,False])
 
 
 
-evaluate(100,customPosition)
-customPosition.move('g2h3')
+#customPosition.move('g2b8')
+#customPosition.move('h8b8')
 print('-')
-evaluate(100,customPosition)
+evaluate(400,customPosition)
 #allMoves(opening)
 #randomMoves(600,opening)
 

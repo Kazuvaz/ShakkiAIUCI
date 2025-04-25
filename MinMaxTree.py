@@ -6,11 +6,14 @@ class Node():
     value : int = 0
     children = []
     scariest : int = -1
+    exploreTime =0
     def __init__(self, board : ShakkiAIUCI.board):
         self.board = board
         self.value = Evaluator.evaluate(self.board)
         self.children = []
+        self.exploreTime =1
     def sprout(self):
+        self.exploreTime += 1
         #jos ei ole lapsia ne luodaan
         if len(self.children) == 0:
             possibleBoards = self.board.trimmedContinuations()
@@ -21,14 +24,27 @@ class Node():
                 return 
         else:
             #viedään sprout lapselle joka vaikuttaa vaarallisimmalta
-            bestNode : Node = self.children[self.scariest]
+            #bestNode : Node = self.children[self.scariest]
+            #bestNode.sprout()
+
+            scary : float = 0
+            best = -9999
+            #exploration tekee hauta leveän 
+            exploration = 999999
+            for i in range(0,len(self.children)):
+                a : Node = self.children[i]
+                if a.exploreTime < exploration or a.exploreTime == exploration and (a.value*-1 > best or a.value*-1 == best and random.randint(0,1)== 0 ) :
+                    best = a.value*-1
+                    scary = i
+                    exploration = a.exploreTime
+            bestNode : Node = self.children[scary]
             bestNode.sprout()
         self.valueChildren()
 
     #antaa uuden arvon parhaan lapsen perusteella
     def valueChildren(self):
         best = -999999
-        scary : int = 0
+        scary : float = 0
         for i in range(0,len(self.children)):
             a : Node = self.children[i]
             if a.value*-1 > best or a.value*-1 == best and random.randint(0,1)== 0:
