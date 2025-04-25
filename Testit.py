@@ -50,9 +50,9 @@ def evaluate(n :int,lauta : ShakkiAIUCI.board):
         start.sprout()
     for i in start.children:
         nod : MinMaxTree.Node = i
-        print(nod.board.prev + " " + str( nod.value)+ " " + str( nod.exploreTime))
+        #print(nod.board.prev + " " + str( nod.value)+ " " + str( nod.exploreTime))
     #start.bestMove()
-    #start.bestLine()
+    start.bestLine()
 
 #alkutilanne
 pieces =[['0' for i in range(8)] for j in range(8)]
