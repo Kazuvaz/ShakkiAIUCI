@@ -42,7 +42,18 @@ tes = TestShakkiAIUCI()
 tes.setUp()
 tes.test_MoukkaSyo
 
-'''
+
+
+def evaluate(n :int,lauta : ShakkiAIUCI.board):
+    start : MinMaxTree.Node = MinMaxTree.Node(lauta)
+    for i in range(0,n):
+        start.sprout()
+    for i in start.children:
+        nod : MinMaxTree.Node = i
+        #print(nod.board.prev + " " + str( nod.value))
+    #start.bestMove()
+    start.bestLine()
+
 #alkutilanne
 pieces =[['0' for i in range(8)] for j in range(8)]
 pieces[0] = ["r","n","b","q","k","b","n","r"]
@@ -54,14 +65,20 @@ opening =  ShakkiAIUCI.board(pieces,True,[True,True,True,True])
 #tilanne custom
 pieces[0] = ["0","0","0","0","0","0","0","0"]
 pieces[1] = ["0","k","0","0","0","0","0","0"]
-pieces[2] = ["0","0","0","0","0","0","0","0"]
+pieces[2] = ["0","0","q","0","0","0","0","0"]
 pieces[3] = ["0","0","0","0","0","0","0","0"]
-pieces[4] = ["0","0","0","0","0","0","p","0"]
-pieces[5] = ["0","0","0","0","0","0","0","r"]
-pieces[6] = ["0","0","0","0","0","K","P","0"]
+pieces[4] = ["0","0","0","0","0","0","0","0"]
+pieces[5] = ["0","0","0","0","0","0","0","0"]
+pieces[6] = ["0","0","0","0","0","K","Q","0"]
 pieces[7] = ["0","0","0","0","0","0","0","0"]
 customPosition =  ShakkiAIUCI.board(pieces,True,[False,False,False,False])
 
+
+
+evaluate(100,customPosition)
+customPosition.move('g2h3')
+print('-')
+evaluate(100,customPosition)
 #allMoves(opening)
 #randomMoves(600,opening)
 
@@ -72,27 +89,3 @@ customPosition =  ShakkiAIUCI.board(pieces,True,[False,False,False,False])
 #evaluate(500,opening)
 
 #customPosition.move("g2h3")
-
-#opening.move('e2e3')
-print("ss")
-opening.move('d2d4')
-opening.move('d7d5')
-opening.move('e2e4')
-opening.move('d5e4')
-opening.move('f1b5')
-opening.move('c7c6')
-opening.move('b5c4')
-opening.move('d8a5')
-opening.move('e1f1')
-
-
-evaluate(300,opening)
-
-
-
-
-customPosition.move("g2h3")
-customPosition.move("g4h3")
-customPosition.prints()
-print( Evaluator.evaluate(customPosition))
-'''
