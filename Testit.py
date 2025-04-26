@@ -3,7 +3,7 @@ import random
 import MinMaxTree
 import Evaluator
 import unittest
-
+import MiniMax
 #pelaa satunnaisia siirtoja n kertaa tulostaa siirrot. tulostaa myös laudan tilan alussa ja lopussa
 class TestShakkiAIUCI(unittest.TestCase):
     opening : ShakkiAIUCI.board
@@ -64,8 +64,8 @@ opening =  ShakkiAIUCI.board(pieces,True,[True,True,True,True])
 
 #tilanne custom
 pieces[0] = ["k","0","0","0","0","0","0","r"]
-pieces[1] = ["p","p","0","0","0","0","0","0"]
-pieces[2] = ["N","0","0","0","0","0","0","0"]
+pieces[1] = ["p","p","0","0","0","0","R","0"]
+pieces[2] = ["0","0","0","0","0","0","0","0"]
 pieces[3] = ["0","0","0","0","0","0","0","0"]
 pieces[4] = ["0","0","0","0","0","0","0","0"]
 pieces[5] = ["0","0","0","0","0","0","Q","0"]
@@ -77,8 +77,8 @@ customPosition =  ShakkiAIUCI.board(pieces,True,[False,False,False,False])
 
 #customPosition.move('g2b8')
 #customPosition.move('h8b8')
-print('-')
-evaluate(400,customPosition)
+
+print(MiniMax.minimaxFirst(customPosition, 3,-99999,99999))
 #allMoves(opening)
 #randomMoves(600,opening)
 

@@ -4,6 +4,14 @@ def evaluate(board : ShakkiAIUCI.board):
     score : float = 0
     score += pieceScore(board)
     score += (activity(board)/20)
+    if not board.turn:
+        score = score*-1
+    return score
+
+def turnBlindEvaluate(board : ShakkiAIUCI.board):
+    score : float = 0
+    score += pieceScore(board)
+    score += (activity(board)/20)
     return score
 
 #käytännössä jakaa pöydän ruutucontrollin mukaan 
@@ -24,10 +32,9 @@ def activity(board : ShakkiAIUCI.board):
                     score += 1
                 elif localScore <0:
                     score -=1
-                
-    if not board.turn:
-        score = score*-1
     return score
+                
+    
 
 #nämä reach funktiot on käytännössä kierrätettyjä ja vähän muutettuja versiota shakkiaiuci.py legalin varmistuksista
 def knightReach(board : ShakkiAIUCI.board, i:int,j:int, s :str):
@@ -150,6 +157,4 @@ def pieceScore(board : ShakkiAIUCI.board):
                     score +=5
     #kerrotaan vuoron perusteella joten ei tarvitse joka summauksessa tarkastaa vuoroa
    
-    if not board.turn:
-        score = -1 *score
     return score
