@@ -2,6 +2,7 @@ import ShakkiAIUCI
 import threading
 import time
 import MinMaxTree
+import MiniMax
 #alkutilanne
 pieces =[['0' for i in range(8)] for j in range(8)]
 pieces[0] = ["r","n","b","q","k","b","n","r"]
@@ -41,14 +42,8 @@ while True:
             moveCount += 1
         currentMoveIndex += moveCount
     elif command.startswith('go'):
-        tim = time.time()
-        puu : MinMaxTree.Node = MinMaxTree.Node(currentState)
-        while True:
-            if time.time()-tim > 1:
-                break
-            puu.sprout()
-        
-        puu.bestMove()
+       
+        print("bestmove " + MiniMax.minimaxFirst(currentState,3,-99999,99999)[0])
 
         
 
