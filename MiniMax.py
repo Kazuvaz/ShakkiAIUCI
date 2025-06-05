@@ -23,7 +23,7 @@ def minimax(board :  ShakkiAIUCI.board, depth : int,alpha, beta):
             else:
                 return -99999
         return 0
-    if not board.turn:
+    if board.turn:
         value = -999999
         for b in continuations:
             tempValue = minimax(b, depth-1,alpha,beta)
@@ -68,30 +68,31 @@ def minimaxFirst(board :  ShakkiAIUCI.board, depth : int,alpha, beta):
             else:
                 return ('end',-99999)
         return ('draw',0)
-    if not board.turn:
-        value = -999999
+    if board.turn:
+        value = ("",-999999)
         moveSyntax = ''
         for b in continuations:
-            tempValue = minimax(b, depth-1,alpha,beta)
-            if tempValue > value:
+            tempValue = minimaxFirst(b, depth-1,alpha,beta)
+            
+            if tempValue[1] > value[1]:
                 value = tempValue
                 cast : ShakkiAIUCI.board = b
                 moveSyntax = cast.prev
-            if value >= beta:
+            if value[1] >= beta:
                 break
-            alpha = max(value, alpha)
-        return (moveSyntax,value)
+            alpha = max(value[1], alpha)
+        return (moveSyntax +" " + value[0],value[1])
     else:
         moveSyntax = ''
-        value = 999999
+        value = ("",999999)
         for b in continuations:
-            tempValue = minimax(b, depth-1,alpha,beta)
-            if tempValue < value:
+            tempValue = minimaxFirst(b, depth-1,alpha,beta)
+            if tempValue[1] < value[1]:
                 value = tempValue
                 cast : ShakkiAIUCI.board = b
                 moveSyntax =cast.prev
-            if value <= alpha:
+            if value[1] <= alpha:
                 break
-            beta = max(value, beta)
-        return (moveSyntax,value)
+            beta = max(value[1], beta)
+        return (moveSyntax+" " + value[0],value[1])
 
