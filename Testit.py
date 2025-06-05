@@ -40,7 +40,7 @@ class TestShakkiAIUCI(unittest.TestCase):
 
 tes = TestShakkiAIUCI()
 tes.setUp()
-tes.test_MoukkaSyo
+tes.test_MoukkaSyo()
 
 
 
@@ -77,7 +77,7 @@ customPosition =  ShakkiAIUCI.board(pieces,True,[False,False,False,False])
 
 #customPosition.move('g2b8')
 #customPosition.move('h8b8')
-
+print("h")
 print(MiniMax.minimaxFirst(customPosition, 3,-99999,99999))
 #allMoves(opening)
 #randomMoves(600,opening)
