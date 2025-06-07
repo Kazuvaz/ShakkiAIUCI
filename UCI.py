@@ -43,7 +43,7 @@ while True:
         currentMoveIndex += moveCount
     elif command.startswith('go'):
        
-        print("bestmove " + MiniMax.minimaxFirst(currentState,3,-99999,99999)[0])
+        print("bestmove " +str.split(MiniMax.minimaxFirst(currentState,3,-99999,99999)," ")[0][0])
 
         
 
