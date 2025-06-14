@@ -50,7 +50,7 @@ class board():
     #edellisen siirron notaatio
     prev :str = 's'
     #en passant
-    special :int =-1
+    special :int =-2
     def __init__(self, pieces, turn, castling):
         #luodaan pöytä tietyssä tilanteessa
         self.pieces =  copy.deepcopy(pieces)
@@ -98,6 +98,8 @@ class board():
             self.special = froms[1]
         elif froms[0] == 1 and not self.turn and tos[0] == 3 and self.pieces[froms[0]][froms[1]]:
             self.special = froms[1]
+        else:
+            self.special = -2
 
         #korotukset
         if len( syntax) > 4:
@@ -107,6 +109,16 @@ class board():
                 self.pieces[tos[0]][tos[1]] = str(syntax[4]).capitalize()
         else:
             self.pieces[tos[0]][tos[1]] = self.pieces[froms[0]][froms[1]]
+        #en passant eriokois poisto
+        direction = -1
+        if not self.turn:
+            direction = 1
+        if self.special == tos[1] and self.pieces[tos[0]][tos[1]] in ['p','P']:
+            if self.turn and tos[0] == 7:
+                self.pieces[6][self.special] = '0'
+            if not self.turn and tos[0] == 2:
+                self.pieces[3][self.special] = '0'
+
         self.pieces[froms[0]][froms[1]] = '0'
         if self.turn:
             self.turn = False
@@ -253,6 +265,8 @@ class board():
     def legalContinuationsUntrimmed(self):
         legals = []
         converted = []
+
+
         for i in range(0,8):
             for j in range(0,8):
                 #onko i,j nappula joka voi liikkua?
@@ -279,6 +293,11 @@ class board():
                                 legals.append((i,j,i+2*direction,j))
                             elif not self.turn and i == 1 and self.pieces[i+2*direction][j] == '0':
                                 legals.append((i,j,i+2*direction,j))
+                            #enpassant 
+                            if self.special in [j-1,j+1]  and not self.turn and i == 5 :
+                                legals.append((i,j,i+direction,self.special))
+                            elif self.special in [j-1,j+1]  and self.turn and i == 6:
+                                legals.append((i,j,i+direction,self.special))
 
 
                         #syö
