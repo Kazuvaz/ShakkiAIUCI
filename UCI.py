@@ -44,7 +44,9 @@ while True:
     elif command.startswith('go'):
         move = (MiniMax.minimaxFirst(currentState,3,-99999,99999)[0])
         splat = move.split(' ')
-        print("bestmove " +len(splat))
+        #tämä on vaan encroissanttia varten koska se ottaa parhaan siirron evaluonnista eika "bestmove " palautteesta evaluonnin teksti ei ole todenpitävä
+        print("info depth 3 seldepth 2 multipv 1 score cp 0 nodes 20 nps 20000 hashfull 0 tbhits 0 time 1 pv " + splat[0])
+        print("bestmove " +splat[0])
 
         
 
