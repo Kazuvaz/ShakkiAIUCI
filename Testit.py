@@ -78,7 +78,7 @@ customPosition =  ShakkiAIUCI.board(pieces,True,[False,False,False,False])
 #customPosition.move('g2b8')
 #customPosition.move('h8b8')
 print("h")
-opening.move("d2d4")
+
 print(MiniMax.minimaxFirst(opening, 4,-99999,99999))
 #allMoves(opening)
 #randomMoves(600,opening)
