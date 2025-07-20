@@ -36,57 +36,42 @@ class TestShakkiAIUCI(unittest.TestCase):
         he : bool = 'e4d5' in self.opening.legalContinuationsUntrimmed()
         self.assertEqual(he,True)
 
+    def test_LoytaaMatinSyvyys1(self):
+        pieces =[['0' for i in range(8)] for j in range(8)]
+        pieces[0] = ["r","n","b","q","k","0","0","r"]
+        pieces[1] = ["p","p","p","p","0","p","p","p"]
+        pieces[2] = ["0","0","0","0","0","n","0","0"]
+        pieces[3] = ["0","0","b","0","p","0","0","Q"]
+        pieces[4] = ["0","0","B","0","P","0","0","0"]
+        pieces[5] = ["0","0","0","0","0","0","0","0"]
+        pieces[6] = ["P","P","P","P","0","P","P","P"]
+        pieces[7] = ["R","N","B","0","K","0","N","R"]
+        customPosition =  ShakkiAIUCI.board(pieces,True,[False,False,False,False])
+        self.assertEqual(MiniMax.minimaxFirst(customPosition, 2,-99999,99999)[0],"h5f7 end")
+    def test_LoytaaMatinSyvyys2(self):
+        pieces =[['0' for i in range(8)] for j in range(8)]
+        pieces[0] = ["k","0","0","0","0","0","0","r"]
+        pieces[1] = ["p","p","0","0","0","0","0","0"]
+        pieces[2] = ["N","0","0","0","0","0","0","0"]
+        pieces[3] = ["0","0","0","0","0","0","0","0"]
+        pieces[4] = ["0","0","0","0","0","0","0","0"]
+        pieces[5] = ["q","0","0","0","0","0","Q","0"]
+        pieces[6] = ["r","0","0","0","0","0","0","0"]
+        pieces[7] = ["0","0","0","0","0","0","K","0"]
+        customPosition =  ShakkiAIUCI.board(pieces,True,[False,False,False,False])
+        self.assertEqual(MiniMax.minimaxFirst(customPosition, 4,-99999,99999)[0],"g3b8 h8b8 a6c7 end")
+    def test_puolustaaSyvyyden2sisällä(self):
+        #tilanne on jokatapuksessa hävitty mutta löytääkö AI selviämisen syvyytensä sisällä
+        pieces =[['0' for i in range(8)] for j in range(8)]
+        pieces[0] = ["0","0","0","0","0","0","0","0"]
+        pieces[1] = ["0","0","0","0","0","0","0","0"]
+        pieces[2] = ["0","0","0","0","0","0","0","0"]
+        pieces[3] = ["0","0","q","0","0","0","0","0"]
+        pieces[4] = ["0","0","0","0","0","0","0","0"]
+        pieces[5] = ["0","k","0","p","0","0","0","0"]
+        pieces[6] = ["0","0","0","P","0","0","0","r"]
+        pieces[7] = ["0","0","0","0","K","R","0","0"]
+        customPosition =  ShakkiAIUCI.board(pieces,True,[False,False,False,False])
+        self.assertEqual(MiniMax.minimaxFirst(customPosition, 4,-99999,99999)[0].split(' ')[0],"e1d1")
+    
 
-
-tes = TestShakkiAIUCI()
-tes.setUp()
-tes.test_MoukkaSyo()
-
-
-
-def evaluate(n :int,lauta : ShakkiAIUCI.board):
-    start : MinMaxTree.Node = MinMaxTree.Node(lauta)
-    for i in range(0,n):
-        start.sprout()
-    for i in start.children:
-        nod : MinMaxTree.Node = i
-        #print(nod.board.prev + " " + str( nod.value)+ " " + str( nod.exploreTime))
-    #start.bestMove()
-    start.bestLine()
-
-#alkutilanne
-pieces =[['0' for i in range(8)] for j in range(8)]
-pieces[0] = ["r","n","b","q","k","b","n","r"]
-pieces[1] = ["p","p","p","p","p","p","p","p"]
-pieces[6] = ["P","P","P","P","P","P","P","P"]
-pieces[7] = ["R","N","B","Q","K","B","N","R"]
-opening =  ShakkiAIUCI.board(pieces,True,[True,True,True,True])
-
-#tilanne custom
-pieces[0] = ["k","0","0","0","0","0","0","r"]
-pieces[1] = ["p","p","0","0","0","0","R","0"]
-pieces[2] = ["0","0","0","0","0","0","0","0"]
-pieces[3] = ["0","0","0","0","0","0","0","0"]
-pieces[4] = ["0","0","0","0","0","0","0","0"]
-pieces[5] = ["0","0","0","0","0","0","Q","0"]
-pieces[6] = ["0","0","0","0","0","0","0","0"]
-pieces[7] = ["0","0","0","0","0","0","K","0"]
-customPosition =  ShakkiAIUCI.board(pieces,True,[False,False,False,False])
-
-
-
-#customPosition.move('g2b8')
-#customPosition.move('h8b8')
-print("h")
-
-print(MiniMax.minimaxFirst(opening, 3,-99999,99999)[0])
-#allMoves(opening)
-#randomMoves(600,opening)
-
-#allMoves(customPosition)
-#randomMoves(3000,customPosition)
-
-
-#evaluate(500,opening)
-
-#customPosition.move("g2h3")
